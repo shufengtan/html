@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Circle Locus Animation</title>
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <svg id="svgCanvas" width="500" height="500">
+        <circle id="largeCircle" cx="250" cy="250" r="100" stroke="black" stroke-width="2" fill="none"></circle>
+        <circle id="smallCircle" cx="350" cy="250" r="10" stroke="red" stroke-width="2" fill="none"></circle>
+        <circle id="point" cx="360" cy="250" r="2" fill="blue"></circle>
+        <path id="locusPath" d="" stroke="blue" fill="none"></path>
+    </svg>
+
+    <script>
+        function animateRollingCircle() {
+            const svg = document.getElementById('svgCanvas');
+            const smallCircle = document.getElementById('smallCircle');
+            const point = document.getElementById('point');
+            const largeCircle = document.getElementById('largeCircle');
+            const locusPath = document.getElementById('locusPath');
+            const largeRadius = parseFloat(largeCircle.getAttribute('r'));
+            const smallRadius = parseFloat(smallCircle.getAttribute('r'));
+            const centerX = parseFloat(largeCircle.getAttribute('cx'));
+            const centerY = parseFloat(largeCircle.getAttribute('cy'));
+            const duration = 10; // Duration in seconds
+
+            let startTime = null;
+            let pathData = "";
+
+            function animate(time) {
+                if (!startTime) startTime = time;
+                const elapsed = (time - startTime) / 1000; // Convert to seconds
+                const angle = (elapsed / duration) * 2 * Math.PI; // Full circle in duration seconds
+
+                const smallCircleX = centerX + (largeRadius + smallRadius) * Math.cos(angle);
+                const smallCircleY = centerY + (largeRadius + smallRadius) * Math.sin(angle);
+
+                smallCircle.setAttribute('cx', smallCircleX);
+                smallCircle.setAttribute('cy', smallCircleY);
+
+                const pointAngle = angle + (elapsed * (largeRadius / smallRadius)); // Point on the periphery
+                const pointX = smallCircleX + smallRadius * Math.cos(pointAngle);
+                const pointY = smallCircleY + smallRadius * Math.sin(pointAngle);
+
+                point.setAttribute('cx', pointX);
+                point.setAttribute('cy', pointY);
+
+                // Update the locus path
+                pathData += `${pointX},${pointY} `;
+                locusPath.setAttribute('d', `M ${pathData}`);
+
+                if (elapsed < duration) {
+                    requestAnimationFrame(animate);
+                } else {
+                    startTime = null; // Reset for continuous animation
+                    pathData = ""; // Clear path data for continuous animation
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animateRollingCircle();
+    </script>
+</body>
+</html>
