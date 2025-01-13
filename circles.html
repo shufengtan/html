@@ -78,25 +78,17 @@
                 pathData += `${pointX},${pointY} `;
                 locusPath.setAttribute('d', `M ${pathData}`);
 
-                if (elapsed < duration) {
-                    requestAnimationFrame(animate);
-                } else {
-                    startTime = null; // Reset for continuous animation
-                    pathData = ""; // Clear path data for continuous animation
-                    requestAnimationFrame(animate);
-                }
+                requestAnimationFrame(animate);
             }
 
             requestAnimationFrame(animate);
         }
 
         document.getElementById('smallRadius').addEventListener('input', () => {
-            document.getElementById('locusPath').setAttribute('d', ''); // Clear path data
             animateRollingCircle();
         });
 
         document.getElementById('speed').addEventListener('input', () => {
-            document.getElementById('locusPath').setAttribute('d', ''); // Clear path data
             animateRollingCircle();
         });
 
